@@ -1,0 +1,17 @@
+server:
+  port: 8000
+spring:
+  application:
+    name: xc‐service‐manage‐cms
+  data:
+    mongodb:
+      uri: mongodb://root:Vv.340222@localhost:27017
+      database: xc_cms
+  #热部署生效
+  devtools:
+    restart:
+      enabled: true
+  freemarker:
+    cache: false
+    settings:
+      template_update_delay: 0
