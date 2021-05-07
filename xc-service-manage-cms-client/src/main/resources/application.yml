@@ -1,8 +1,8 @@
 server:
-  port: 8000
+  port: 9000
 spring:
   application:
-    name: xc‐service‐manage‐cms
+    name: xc‐service‐manage‐cms-client
   data:
     mongodb:
       uri: mongodb://root:Vv.340222@localhost:27017
@@ -21,3 +21,7 @@ spring:
     cache: false
     settings:
       template_update_delay: 0
+xuecheng:
+  mq:
+    queue: queue_cms_postpage_01
+    routinKey: 5a751fab6abb5044e0d19ea1

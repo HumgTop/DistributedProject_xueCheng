@@ -5,6 +5,7 @@ import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
 import com.xuecheng.framework.model.response.QueryResponseResult;
+import com.xuecheng.framework.model.response.ResponseResult;
 import com.xuecheng.manage_cms.service.PageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -69,5 +70,17 @@ public class CmsPageController implements CmsPageControllerApi {
     @PutMapping("/edit/{id}")   //put请求表示更新服务器资源
     public CmsPageResult edit(@PathVariable("id") String id, @RequestBody CmsPage cmsPage) {
         return pageService.update(id, cmsPage);
+    }
+
+    /**
+     * 将指定的cmsPage生成静态页面（数据模型从cms_config中获取）存储到GridFS中（并发送消息通知cms_client，将该页面部署到服务器指定路径）
+     *
+     * @param pageId
+     * @return
+     */
+    @Override
+    @PostMapping("/postPage/{pageId}")
+    public ResponseResult post(@PathVariable("pageId") String pageId) {
+        return pageService.post(pageId);
     }
 }

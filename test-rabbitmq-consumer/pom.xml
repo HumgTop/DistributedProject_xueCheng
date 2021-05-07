@@ -14,10 +14,20 @@
 
     <dependencies>
         <!--        rabbitmq Java客户端-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.rabbitmq</groupId>-->
+        <!--            <artifactId>amqp-client</artifactId>-->
+        <!--            <version>4.0.3</version>-->
+        <!--        </dependency>-->
+
+
         <dependency>
-            <groupId>com.rabbitmq</groupId>
-            <artifactId>amqp-client</artifactId>
-            <version>4.0.3</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
 
         <dependency>
