@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuecheng.manage_course.dao.TeachplanMapper">
+
+    <resultMap id="teachplanMap" type="com.xuecheng.framework.domain.course.ext.TeachplanNode">
+        <!--        映射主键-->
+        <id column="one_id" property="id"></id>
+        <!--        映射普通列-->
+        <result column="one_pname" property="pname"></result>
+        <!--        映射二级节点（一对多关系使用collection标签）-->
+        <collection property="children" ofType="com.xuecheng.framework.domain.course.ext.TeachplanNode">
+            <id column="two_id" property="id"></id>
+            <result column="two_pname" property="pname"></result>
+            <!--            映射三级节点（一对多关系）-->
+            <collection property="children" ofType="com.xuecheng.framework.domain.course.ext.TeachplanNode">
+                <id column="three_id" property="id"></id>
+                <result column="three_pname" property="pname"></result>
+            </collection>
+        </collection>
+
+    </resultMap>
+
+    <select id="selectList" parameterType="java.lang.String" resultMap="teachplanMap">
+        select t1.id as one_id,
+        t1.pname as one_pname,
+        t2.id as two_id,
+        t2.pname as two_pname,
+        t3.id as three_id,
+        t3.pname as three_pname
+        from teachplan as t1
+        left join teachplan as t2 on t1.id = t2.parentid
+        left join teachplan as t3 on t2.id = t3.parentid
+        where
+            t1.courseid = #{courseId}
+        and t1.parentid = '0'
+        order by two_id, three_id;
+    </select>
+</mapper>
