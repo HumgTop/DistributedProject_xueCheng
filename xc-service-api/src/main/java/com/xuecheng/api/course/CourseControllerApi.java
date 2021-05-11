@@ -24,4 +24,7 @@ public interface CourseControllerApi {
 
     @ApiOperation("查询我的课程列表")
     public QueryResponseResult<CourseInfo> findCourseList(int page, int size, CourseListRequest courseListRequest);
+
+    @ApiOperation("添加课程图片")
+    public ResponseResult addCoursePic(String courseId, String pic);
 }

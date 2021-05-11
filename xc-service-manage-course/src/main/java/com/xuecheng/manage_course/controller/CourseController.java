@@ -44,6 +44,13 @@ public class CourseController implements CourseControllerApi {
             @PathVariable("page") int page,
             @PathVariable("size") int size,
             CourseListRequest courseListRequest) {
-        return courseService.findCourseList(page,size,courseListRequest);
+        return courseService.findCourseList(page, size, courseListRequest);
+    }
+
+    @Override
+    @PostMapping("/coursepic/add")
+    public ResponseResult addCoursePic(@RequestParam("courseId") String courseId,
+                                       @RequestParam("pic") String pic) {
+        return courseService.saveCoursePic(courseId, pic);
     }
 }
