@@ -1,12 +1,19 @@
 package com.xuecheng.manage_course.service;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.xuecheng.framework.domain.course.CourseBase;
 import com.xuecheng.framework.domain.course.Teachplan;
+import com.xuecheng.framework.domain.course.ext.CourseInfo;
 import com.xuecheng.framework.domain.course.ext.TeachplanNode;
+import com.xuecheng.framework.domain.course.request.CourseListRequest;
 import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.CommonCode;
+import com.xuecheng.framework.model.response.QueryResponseResult;
+import com.xuecheng.framework.model.response.QueryResult;
 import com.xuecheng.framework.model.response.ResponseResult;
 import com.xuecheng.manage_course.dao.CourseBaseRepository;
+import com.xuecheng.manage_course.dao.CourseMapper;
 import com.xuecheng.manage_course.dao.TeachplanMapper;
 import com.xuecheng.manage_course.dao.TeachplanRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +37,8 @@ public class CourseService {
     TeachplanRepository teachplanRepository;
     @Autowired
     CourseBaseRepository courseBaseRepository;
+    @Autowired
+    CourseMapper courseMapper;
 
     //查询课程计划
     public TeachplanNode findTeachplanList(String courseId) {
@@ -88,5 +97,31 @@ public class CourseService {
             return teachplan.getId();   //主键id会回写到teachplan对象中
         }
         return teachplanList.get(0).getId();
+    }
+
+    //课程列表分页查询
+    public QueryResponseResult<CourseInfo> findCourseList(int page, int size, CourseListRequest courseListRequest) {
+        if (courseListRequest == null) {
+            courseListRequest = new CourseListRequest();
+        }
+        if (page < 0) {
+            page = 0;
+        }
+        if (size < 1) {
+            size = 20;
+        }
+        //设置分页参数
+        PageHelper.startPage(page, size);
+        //分页查询
+        Page<CourseInfo> courseListPage = courseMapper.findCourseListPage(courseListRequest);
+        //结果集
+        List<CourseInfo> result = courseListPage.getResult();
+        //总记录数
+        long total = courseListPage.getTotal();
+        //封装返回结果
+        QueryResult<CourseInfo> courseInfoQueryResult = new QueryResult<>();
+        courseInfoQueryResult.setList(result);
+        courseInfoQueryResult.setTotal(total);
+        return new QueryResponseResult<>(CommonCode.SUCCESS, courseInfoQueryResult);
     }
 }

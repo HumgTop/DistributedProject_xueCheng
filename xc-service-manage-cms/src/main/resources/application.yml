@@ -1,5 +1,5 @@
 server:
-  port: 8000
+  port: 31001
 spring:
   application:
     name: xc‐service‐manage‐cms
