@@ -3,12 +3,14 @@ package com.xuecheng.manage_course;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
  * @author Administrator
  * @version 1.0
  **/
+@EnableDiscoveryClient  //Eureka客户端注解
 @SpringBootApplication
 @EntityScan("com.xuecheng.framework.domain.course")//扫描实体类
 @ComponentScan(basePackages={"com.xuecheng.api"})//扫描接口

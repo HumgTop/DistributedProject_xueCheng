@@ -90,6 +90,12 @@
             <artifactId>pagehelper-spring-boot-starter</artifactId>
             <version>1.2.4</version>
         </dependency>
+
+        <!-- 导入Eureka服务的依赖 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
