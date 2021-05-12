@@ -1,8 +1,8 @@
 server:
-  port: 31001
+  port: ${PORT:31001}
 spring:
   application:
-    name: xc‐service‐manage‐cms
+    name: xc-service-manage-cms
   data:
     mongodb:
       uri: mongodb://root:Vv.340222@localhost:27017
@@ -23,9 +23,9 @@ spring:
       template_update_delay: 0
 eureka:
   client:
-    register-with-eureka: true  # 服务注册，是否将自己注册到Eureka服务中
-    fetch-registry: true   # 服务发现，是否从eureka中获取注册信息
-    service-url:
+    registerWithEureka: true  # 服务注册，是否将自己注册到Eureka服务中
+    fetchRegistry: true   # 服务发现，是否从eureka中获取注册信息
+    serviceUrl:
       defaultZone: ${EUREKA_SERVER:http://localhost:50101/eureka/}
   instance:
     prefer-ip-address: true   #将自己的ip注册到Eureka Server中

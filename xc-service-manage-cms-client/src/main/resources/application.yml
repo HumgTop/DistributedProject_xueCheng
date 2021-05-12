@@ -2,7 +2,7 @@ server:
   port: 9000
 spring:
   application:
-    name: xc‐service‐manage‐cms-client
+    name: xc-service-manage-cms-client
   data:
     mongodb:
       uri: mongodb://root:Vv.340222@localhost:27017
