@@ -6,6 +6,7 @@ import com.xuecheng.framework.domain.course.CourseBase;
 import com.xuecheng.framework.domain.course.CoursePic;
 import com.xuecheng.framework.domain.course.Teachplan;
 import com.xuecheng.framework.domain.course.ext.CourseInfo;
+import com.xuecheng.framework.domain.course.ext.CourseView;
 import com.xuecheng.framework.domain.course.ext.TeachplanNode;
 import com.xuecheng.framework.domain.course.request.CourseListRequest;
 import com.xuecheng.framework.exception.ExceptionCast;
@@ -39,6 +40,8 @@ public class CourseService {
     CourseMapper courseMapper;
     @Autowired
     CoursePicRepository coursePicRepository;
+    @Autowired
+    CourseMarketRepository courseMarketRepository;
 
     //查询课程计划
     public TeachplanNode findTeachplanList(String courseId) {
@@ -140,5 +143,15 @@ public class CourseService {
         coursePic.setPic(pic);
         coursePicRepository.save(coursePic);
         return new ResponseResult(CommonCode.SUCCESS);
+    }
+
+    //查询课程视图
+    public CourseView getCourseView(String courseId) {
+        CourseView courseView = new CourseView();
+        courseBaseRepository.findById(courseId).ifPresent(courseView::setCourseBase);
+        coursePicRepository.findById(courseId).ifPresent(courseView::setCoursePic);
+        courseMarketRepository.findById(courseId).ifPresent(courseView::setCourseMarket);
+        courseView.setTeachplanNode(teachplanMapper.selectList(courseId));
+        return courseView;
     }
 }

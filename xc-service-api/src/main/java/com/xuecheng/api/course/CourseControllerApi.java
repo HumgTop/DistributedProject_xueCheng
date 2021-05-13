@@ -2,6 +2,7 @@ package com.xuecheng.api.course;
 
 import com.xuecheng.framework.domain.course.Teachplan;
 import com.xuecheng.framework.domain.course.ext.CourseInfo;
+import com.xuecheng.framework.domain.course.ext.CourseView;
 import com.xuecheng.framework.domain.course.ext.TeachplanNode;
 import com.xuecheng.framework.domain.course.request.CourseListRequest;
 import com.xuecheng.framework.model.response.QueryResponseResult;
@@ -27,4 +28,7 @@ public interface CourseControllerApi {
 
     @ApiOperation("添加课程图片")
     public ResponseResult addCoursePic(String courseId, String pic);
+
+    @ApiOperation("课程视图查询")
+    public CourseView getCourseView(String courseId);
 }
