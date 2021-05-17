@@ -35,5 +35,4 @@ public class FileSystem {
     private String filetag;
     //文件元信息
     private Map metadata;
-
 }

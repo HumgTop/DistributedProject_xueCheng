@@ -96,22 +96,23 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
-<!--        &lt;!&ndash;Ribbon依赖&ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-starter-ribbon</artifactId>-->
-<!--            <version>1.4.4.RELEASE</version>-->
-<!--        </dependency>-->
-<!--        &lt;!&ndash;http客户端，用于发起http请求&ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>com.squareup.okhttp3</groupId>-->
-<!--            <artifactId>okhttp</artifactId>-->
-<!--        </dependency>-->
-<!--已经引入了ribbon依赖-->
+        <!--        &lt;!&ndash;Ribbon依赖&ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.cloud</groupId>-->
+        <!--            <artifactId>spring-cloud-starter-ribbon</artifactId>-->
+        <!--            <version>1.4.4.RELEASE</version>-->
+        <!--        </dependency>-->
+        <!--        &lt;!&ndash;http客户端，用于发起http请求&ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.squareup.okhttp3</groupId>-->
+        <!--            <artifactId>okhttp</artifactId>-->
+        <!--        </dependency>-->
+        <!--已经引入了ribbon依赖-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
+        <!--        http客户端-->
         <dependency>
             <groupId>com.netflix.feign</groupId>
             <artifactId>feign-okhttp</artifactId>

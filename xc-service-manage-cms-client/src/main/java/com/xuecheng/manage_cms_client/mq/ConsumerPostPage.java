@@ -14,7 +14,6 @@ import java.util.Map;
  * @Autor HumgTop
  * @Date 2021/5/6 21:02
  * @Version 1.0
- * <p>
  * 监听消息队列，收到消息后调用Service层方法从GridFS下载html文件，并存储到服务器指定物理路径
  */
 @Component
@@ -36,5 +35,4 @@ public class ConsumerPostPage {
         //调用Service方法
         pageService.savePageToServerPath(pageId);
     }
-
 }

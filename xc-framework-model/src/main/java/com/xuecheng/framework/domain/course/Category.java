@@ -28,5 +28,4 @@ public class Category implements Serializable {
     private String isshow;
     private Integer orderby;
     private String isleaf;
-
 }
