@@ -387,4 +387,18 @@ public class PageService {
         cmsPageRepository.save(cmsPage);
         return cmsPage;
     }
+
+    public CmsPageResult save(CmsPage cmsPage) {
+        CmsPage cmsPageInDb = cmsPageRepository.findByPageNameAndPageWebPathAndSiteId(cmsPage.getPageName(),
+                cmsPage.getPageWebPath(),
+                cmsPage.getSiteId());
+        if (cmsPageInDb != null) {
+            //设置主键，save方法更新cmsPageInDb
+            cmsPage.setPageId(cmsPageInDb.getPageId());
+        }
+
+        //有主键更新信息，否则插入新数据
+        cmsPageRepository.save(cmsPage);
+        return new CmsPageResult(CommonCode.SUCCESS, cmsPage);
+    }
 }

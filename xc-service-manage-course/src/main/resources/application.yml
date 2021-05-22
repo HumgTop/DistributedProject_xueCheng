@@ -35,3 +35,10 @@ ribbon:
   OkToRetryOnAllOperations: false
   ConnectTimeout: 5000
   ReadTimeout: 6000
+course-publish:
+  siteId: 609c8fdf689bc93304cb4c9e
+  templateId: 609c8516689bc93304cb4c9a
+  previewUrl: http://www.xuecheng.com/cms/preview/
+  pageWebPath: /course/detail/
+  pagePhysicalPath: /course/detail/
+  dataUrlPre: http://localhost:31200/course/courseview/

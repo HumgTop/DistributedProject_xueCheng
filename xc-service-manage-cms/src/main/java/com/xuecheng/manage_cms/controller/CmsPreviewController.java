@@ -36,6 +36,8 @@ public class CmsPreviewController extends BaseController {
 
         try {
             ServletOutputStream outputStream = response.getOutputStream();
+            //设置响应头为text/html，才能使用SSI技术
+            response.setHeader("Content-type", "text/html;charset=utf-8");
             outputStream.write(pageHtml.getBytes("utf-8"));
         } catch (IOException e) {
             e.printStackTrace();
