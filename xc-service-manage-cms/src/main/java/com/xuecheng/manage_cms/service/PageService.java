@@ -6,10 +6,12 @@ import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.xuecheng.framework.domain.cms.CmsConfig;
 import com.xuecheng.framework.domain.cms.CmsPage;
+import com.xuecheng.framework.domain.cms.CmsSite;
 import com.xuecheng.framework.domain.cms.CmsTemplate;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
 import com.xuecheng.framework.domain.cms.response.CmsCode;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
+import com.xuecheng.framework.domain.cms.response.CmsPostPageResult;
 import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.QueryResponseResult;
@@ -18,6 +20,7 @@ import com.xuecheng.framework.model.response.ResponseResult;
 import com.xuecheng.manage_cms.config.RabbitmqConfig;
 import com.xuecheng.manage_cms.dao.CmsConfigRepository;
 import com.xuecheng.manage_cms.dao.CmsPageRepository;
+import com.xuecheng.manage_cms.dao.CmsSiteRepository;
 import com.xuecheng.manage_cms.dao.CmsTemplateRepository;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -49,6 +52,7 @@ public class PageService {
     CmsPageRepository cmsPageRepository;
     CmsConfigRepository cmsConfigRepository;
     CmsTemplateRepository cmsTemplateRepository;
+    CmsSiteRepository cmsSiteRepository;
 
     RestTemplate restTemplate;
     GridFsTemplate gridFsTemplate;
@@ -64,7 +68,8 @@ public class PageService {
                        CmsTemplateRepository cmsTemplateRepository,
                        GridFsTemplate gridFsTemplate,
                        GridFSBucket gridFSBucket,
-                       RabbitTemplate rabbitTemplate) {
+                       RabbitTemplate rabbitTemplate,
+                       CmsSiteRepository cmsSiteRepository) {
 
         this.cmsPageRepository = cmsPageRepository;
         this.cmsConfigRepository = cmsConfigRepository;
@@ -73,6 +78,7 @@ public class PageService {
         this.gridFsTemplate = gridFsTemplate;
         this.gridFSBucket = gridFSBucket;
         this.rabbitTemplate = rabbitTemplate;
+        this.cmsSiteRepository = cmsSiteRepository;
     }
 
 
@@ -348,6 +354,7 @@ public class PageService {
         String msg = JSON.toJSONString(msgMap);
         //获取站点id作为routingKey
         String routingKey = cmsPage.getSiteId();
+
         //发布消息到指定交换机，再根据routinKey转发到对应队列
         /**
          * param1： 交换机
@@ -400,5 +407,29 @@ public class PageService {
         //有主键更新信息，否则插入新数据
         cmsPageRepository.save(cmsPage);
         return new CmsPageResult(CommonCode.SUCCESS, cmsPage);
+    }
+
+    //一键发布页面
+    public CmsPostPageResult postPageQuick(CmsPage cmsPage) {
+        //1.保存cmspage到数据库中
+        CmsPageResult cmsPageResult = save(cmsPage);
+        String pageId = cmsPageResult.getCmsPage().getPageId();
+        //2.执行页面发布（静态化、保存到GridFS、向MQ发送消息）
+        ResponseResult responseResult = post(pageId);
+        if (!responseResult.isSuccess()) {
+            ExceptionCast.cast(CommonCode.FAIL);
+        }
+        String pageUrl = null;
+
+        //查询站点信息
+        Optional<CmsSite> cmsSiteOptional = cmsSiteRepository.findById(cmsPage.getSiteId());
+        if (cmsSiteOptional.isPresent()) {
+            CmsSite cmsSite = cmsSiteOptional.get();
+            pageUrl = cmsSite.getSiteDomain() + cmsSite.getSiteWebPath() + cmsPage.getPageWebPath() + cmsPage.getPageName();
+        }
+        if (pageUrl == null) {
+            return new CmsPostPageResult(CommonCode.FAIL, null);
+        }
+        return new CmsPostPageResult(CommonCode.SUCCESS, pageUrl);
     }
 }

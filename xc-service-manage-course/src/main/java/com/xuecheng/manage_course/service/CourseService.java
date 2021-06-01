@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
+import com.xuecheng.framework.domain.cms.response.CmsPostPageResult;
 import com.xuecheng.framework.domain.course.CourseBase;
 import com.xuecheng.framework.domain.course.CoursePic;
 import com.xuecheng.framework.domain.course.Teachplan;
@@ -183,7 +184,7 @@ public class CourseService {
 
     //课程预览
     public CoursePublishResult preview(String courseId) {
-        //创建CmsPage对象
+        //创建CmsPage对象，添加cmsPage到cms_page中
         CmsPage cmsPage = new CmsPage();
         cmsPage.setSiteId(publish_siteId);
         cmsPage.setTemplateId(publish_templateId);
@@ -210,6 +211,39 @@ public class CourseService {
         }
 
         ExceptionCast.cast(CourseCode.COURSE_GET_NOTEXISTS);
+        return courseBase;
+    }
+
+    //课程发布
+    @Transactional  //更改课程发布状态，涉及到事务提交使用注解
+    public CoursePublishResult publish(String courseId) {
+        //创建CmsPage对象，添加cmsPage到cms_page中
+        CmsPage cmsPage = new CmsPage();
+        cmsPage.setSiteId(publish_siteId);
+        cmsPage.setTemplateId(publish_templateId);
+        cmsPage.setPageWebPath(publish_page_webpath);
+        cmsPage.setDataUrl(publish_dataUrlPre + courseId);
+        cmsPage.setPageName(courseId + ".html");
+        cmsPage.setPagePhysicalPath(publish_page_physicalpath);
+        //页面别名就是课程名称
+        cmsPage.setPageAliase(findCourseBaseById(courseId).getName());
+
+        //远程调用：一键发布页面
+        CmsPostPageResult cmsPostPageResult = cmsPageClient.postPageQuick(cmsPage);
+        if (!cmsPostPageResult.isSuccess()) {
+            return new CoursePublishResult(CommonCode.FAIL, null);
+        }
+        //更新课程发布状态
+        saveCoursePubState(courseId);
+
+        return new CoursePublishResult(CommonCode.SUCCESS, cmsPostPageResult.getPageUrl());
+    }
+
+    //更改课程发布状态
+    private CourseBase saveCoursePubState(String courseId) {
+        CourseBase courseBase = courseBaseRepository.getOne(courseId);
+        courseBase.setStatus("202002"); //已发布状态
+        courseBaseRepository.save(courseBase);
         return courseBase;
     }
 }

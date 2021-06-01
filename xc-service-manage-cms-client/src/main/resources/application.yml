@@ -23,5 +23,5 @@ spring:
       template_update_delay: 0
 xuecheng:
   mq:
-    queue: queue_cms_postpage_01
-    routinKey: 5a751fab6abb5044e0d19ea1
+    queue: queue_cms_postpage_03
+    routinKey: 609c8fdf689bc93304cb4c9e

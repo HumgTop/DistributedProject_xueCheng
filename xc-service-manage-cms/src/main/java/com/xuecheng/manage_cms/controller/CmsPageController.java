@@ -4,6 +4,7 @@ import com.xuecheng.api.cms.CmsPageControllerApi;
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
+import com.xuecheng.framework.domain.cms.response.CmsPostPageResult;
 import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.framework.model.response.ResponseResult;
 import com.xuecheng.manage_cms.service.PageService;
@@ -74,9 +75,6 @@ public class CmsPageController implements CmsPageControllerApi {
 
     /**
      * 将指定的cmsPage生成静态页面（数据模型从cms_config中获取）存储到GridFS中（并发送消息通知cms_client，将该页面部署到服务器指定路径）
-     *
-     * @param pageId
-     * @return
      */
     @Override
     @PostMapping("/postPage/{pageId}")
@@ -88,5 +86,11 @@ public class CmsPageController implements CmsPageControllerApi {
     @PostMapping("/save")
     public CmsPageResult save(@RequestBody CmsPage cmsPage) {
         return pageService.save(cmsPage);
+    }
+
+    @Override
+    @PostMapping("/postPageQuick")
+    public CmsPostPageResult postPageQuick(@RequestBody CmsPage cmsPage) {
+        return pageService.postPageQuick(cmsPage);
     }
 }
