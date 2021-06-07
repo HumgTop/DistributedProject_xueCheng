@@ -17,6 +17,7 @@ public class ElasticsearchConfig {
     @Value("${xuecheng.elasticsearch.hostlist}")
     private String hostlist;
 
+    //优先使用高级别客户端
     @Bean
     public RestHighLevelClient restHighLevelClient() {
         //解析hostlist配置信息

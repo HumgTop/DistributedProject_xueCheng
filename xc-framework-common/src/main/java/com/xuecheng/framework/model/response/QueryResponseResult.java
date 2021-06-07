@@ -7,9 +7,9 @@ import lombok.ToString;
 @ToString
 public class QueryResponseResult<T> extends ResponseResult {    //此处泛型参数，只用作标记queryResult中的对象类型
 
-    QueryResult queryResult;
+    QueryResult<T> queryResult;
 
-    public QueryResponseResult(ResultCode resultCode, QueryResult queryResult) {
+    public QueryResponseResult(ResultCode resultCode, QueryResult<T> queryResult) {
         super(resultCode);
         this.queryResult = queryResult;
     }
