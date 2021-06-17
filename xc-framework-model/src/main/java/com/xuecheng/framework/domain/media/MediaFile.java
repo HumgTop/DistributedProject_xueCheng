@@ -23,6 +23,8 @@ public class MediaFile {
     private String fileOriginalName;
     //文件路径
     private String filePath;
+    //文件夹路径
+    private String fileFolderPath;
     //文件url
     private String fileUrl;
     //文件类型

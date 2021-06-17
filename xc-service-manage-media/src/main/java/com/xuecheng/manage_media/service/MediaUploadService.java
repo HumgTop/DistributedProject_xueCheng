@@ -1,14 +1,18 @@
 package com.xuecheng.manage_media.service;
 
+import com.alibaba.fastjson.JSON;
 import com.xuecheng.framework.domain.media.MediaFile;
 import com.xuecheng.framework.domain.media.response.CheckChunkResult;
 import com.xuecheng.framework.domain.media.response.MediaCode;
 import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.ResponseResult;
+import com.xuecheng.manage_media.config.RabbitMQConfig;
 import com.xuecheng.manage_media.dao.MediaFileRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,6 +33,12 @@ public class MediaUploadService {
 
     @Value("${xc-service-manage-media.upload-location}")
     String uploadLocation;
+
+    @Autowired
+    RabbitTemplate rabbitTemplate;
+
+    @Value("${xc-service-manage-media.mq.routingkey-media-video}")
+    String routingKey;
 
     //文件上传前的注册，检查文件是否存在
     public ResponseResult register(String fileMd5, String fileName, Long fileSize, String mimetype, String fileExt) {
@@ -146,19 +156,22 @@ public class MediaUploadService {
         mediaFile.setFileOriginalName(fileName);
         //文件保存的相对路径
         mediaFile.setFilePath(getFileFolderRelativePath(fileMd5, fileExt));
+        mediaFile.setFileFolderPath(getFileFolderPath(fileMd5));
         mediaFile.setFileSize(fileSize);
         mediaFile.setUploadTime(new Date());
         mediaFile.setMimeType(mimetype);
         mediaFile.setFileType(fileExt);
 
         mediaFile.setFileStatus("301002");
-        MediaFile save = mediaFileRepository.save(mediaFile);
+        mediaFileRepository.save(mediaFile);
+        //向mq发送视频处理消息
+        sendProcessVideoMsg(mediaFile.getFileId());
         return new ResponseResult(CommonCode.SUCCESS);
     }
 
     //获取文件存储的相对路径
     private String getFileFolderRelativePath(String fileMd5, String fileExt) {
-        return fileMd5.charAt(0) + "/" + fileMd5.charAt(1) + "/" + fileMd5 + "." + fileExt;
+        return fileMd5.charAt(0) + "/" + fileMd5.charAt(1) + "/" + fileMd5 + "/" + fileMd5 + "." + fileExt;
     }
 
     //合并文件
@@ -202,5 +215,27 @@ public class MediaUploadService {
         } finally {
             return true;
         }
+    }
+
+    //发送视频处理消息到mq
+    public ResponseResult sendProcessVideoMsg(String mediaId) {
+        //查询mongoDB是否已有此文件记录
+        Optional<MediaFile> optionalMediaFile = mediaFileRepository.findById(mediaId);
+        if (!optionalMediaFile.isPresent()) {
+            ExceptionCast.cast(CommonCode.FAIL);
+        }
+        //构造消息内容
+        Map<String, String> map = new HashMap<>();
+        map.put("mediaId", mediaId);
+        String jsonContent = JSON.toJSONString(map);
+        //发送消息到交换机
+        try {
+            rabbitTemplate.convertAndSend(RabbitMQConfig.EX_MEDIA_PROCESSTASK, routingKey, jsonContent);
+        } catch (AmqpException e) {
+            e.printStackTrace();
+            return new ResponseResult(CommonCode.FAIL);
+        }
+
+        return new ResponseResult(CommonCode.SUCCESS);
     }
 }

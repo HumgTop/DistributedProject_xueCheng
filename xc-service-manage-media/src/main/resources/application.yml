@@ -5,10 +5,19 @@ spring:
     name: xc-service-manage-media
   data:
     mongodb:
-      uri:  mongodb://root:Vv.340222@localhost:27017
+      uri: mongodb://root:Vv.340222@localhost:27017
       database: xc_media
+  rabbitmq:
+    host: linux.humg.top
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
 xc-service-manage-media:
   upload-location: D:/JavaProject/xcEdu/video/
+  mq:
+    queue-media-video-processor: queue_media_video_processor
+    routingkey-media-video: routingkey_media_video
 eureka:
   client:
     registerWithEureka: true #服务注册开关
@@ -16,7 +25,7 @@ eureka:
     serviceUrl: #Eureka客户端与Eureka服务端进行交互的地址，多个中间用逗号分隔
       defaultZone: ${EUREKA_SERVER:http://localhost:50101/eureka/}
   instance:
-    prefer-ip-address:  true  #将自己的ip地址注册到Eureka服务中
+    prefer-ip-address: true  #将自己的ip地址注册到Eureka服务中
     ip-address: ${IP_ADDRESS:127.0.0.1}
     instance-id: ${spring.application.name}:${server.port} #指定实例id
 ribbon:
