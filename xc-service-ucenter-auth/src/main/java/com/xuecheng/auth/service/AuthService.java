@@ -49,13 +49,13 @@ public class AuthService {
         if (authToken == null) {
             ExceptionCast.cast(AuthCode.AUTH_LOGIN_ERROR);
         }
-        //将token存储到redis
+        //将短令牌（身份令牌）和长令牌（JWT令牌）存储到redis
         String access_token = authToken.getAccess_token();
-        String tokenJson = JSON.toJSONString(access_token);
+        String authTokenJson = JSON.toJSONString(authToken);
         //保存是否成功
-        boolean saveTokenRes = saveToken("user_token:" + access_token, tokenJson, tokenValiditySeconds);
+        boolean saveTokenRes = saveToken("user_token:" + access_token, authTokenJson, tokenValiditySeconds);
         //保存失败则抛出异常
-        if (!saveTokenRes){
+        if (!saveTokenRes) {
             ExceptionCast.cast(AuthCode.AUTH_LOGIN_TOKEN_SAVEFAIL);
         }
 
@@ -107,7 +107,7 @@ public class AuthService {
                 }
             }
         });
-        //获得http请求的响应
+        //进行http请求，获得响应
         ResponseEntity<Map> exchange = restTemplate.exchange(authUrl, HttpMethod.POST, httpEntity, Map.class);
         //令牌信息
         Map bodyMap = exchange.getBody();
@@ -124,5 +124,23 @@ public class AuthService {
         authToken.setJwt_token((String) bodyMap.get("access_token"));
         authToken.setRefresh_token((String) bodyMap.get("refresh_token"));
         return authToken;
+    }
+
+    //使用身份令牌从redis中获取jwt令牌
+    public AuthToken getUserToken(String access_token) {
+        String key = "user_token:" + access_token;
+        String authTokenJson = stringRedisTemplate.opsForValue().get(key);
+
+        if (authTokenJson == null || authTokenJson.equals("")) {
+            return null;
+        }
+        return JSON.parseObject(authTokenJson, AuthToken.class);
+    }
+
+    //删除redis的token
+    public boolean deleteToken(String access_token) {
+        String key = "user_token:" + access_token;
+        stringRedisTemplate.delete(key);
+        return true;
     }
 }

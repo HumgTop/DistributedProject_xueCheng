@@ -1,5 +1,6 @@
 package com.xuecheng.auth.service;
 
+import com.xuecheng.auth.client.UserClient;
 import com.xuecheng.framework.domain.ucenter.XcMenu;
 import com.xuecheng.framework.domain.ucenter.ext.XcUserExt;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +26,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     ClientDetailsService clientDetailsService;
 
-    //该方法由Spring Security框架自动调用
+    @Autowired
+    UserClient userClient;
+
+    //该方法由Spring Security框架自动调用（请求用户服务查询用户）
+    //返回userDetails，Spring Security框架将进行密码比对
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         //取出身份，如果身份为空说明没有认证
@@ -42,18 +47,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (StringUtils.isEmpty(username)) {
             return null;
         }
-        XcUserExt userext = new XcUserExt();
-        userext.setUsername("itcast");
-        userext.setPassword(new BCryptPasswordEncoder().encode("123"));
-        userext.setPermissions(new ArrayList<XcMenu>());
+
+        //远程调用用户中心接口校验用户账号密码
+        XcUserExt userext = userClient.getUserExt(username);
         if (userext == null) {
             return null;
         }
+        userext.setPermissions(new ArrayList<>());
         //取出正确密码（hash值）
         String password = userext.getPassword();
-        //这里暂时使用静态密码
-//       String password ="123";
-        //用户权限，这里暂时使用静态数据，最终会从数据库读取
         //从数据库获取权限
         List<XcMenu> permissions = userext.getPermissions();
         List<String> user_permission = new ArrayList<>();

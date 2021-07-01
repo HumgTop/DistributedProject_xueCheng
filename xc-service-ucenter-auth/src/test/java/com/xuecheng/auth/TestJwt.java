@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.jwt.Jwt;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.security.jwt.crypto.sign.RsaSigner;
@@ -52,5 +53,19 @@ public class TestJwt {
         //生成jwt令牌编码
         String encoded = jwt.getEncoded();
         System.out.println(encoded);
+    }
+
+    @Test
+    public void testBcrypt() {
+        String password = "111111";
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String[] res = new String[2];
+        for (int i = 0; i < 2; i++) {
+            String encode = passwordEncoder.encode(password);
+            res[i] = encode;
+        }
+        for (String encode : res) {
+            System.out.println(passwordEncoder.matches(password, encode));
+        }
     }
 }

@@ -7,8 +7,9 @@ import lombok.ToString;
 
 import java.util.List;
 
+
 /**
- * Created by admin on 2018/3/20.
+ * 扩展实体类
  */
 @Data
 @ToString
