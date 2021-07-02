@@ -84,7 +84,7 @@ public class AuthService {
         URI uri = serviceInstance.getUri();
         //令牌的申请地址
         String authUrl = uri + "/auth/oauth/token";
-        //定义header
+        //添加header字段Authorization
         LinkedMultiValueMap<String, String> header = new LinkedMultiValueMap<>();
         String httpBasic = getHttpBasic(clientId, clientSecret);
         header.add("Authorization", httpBasic);
