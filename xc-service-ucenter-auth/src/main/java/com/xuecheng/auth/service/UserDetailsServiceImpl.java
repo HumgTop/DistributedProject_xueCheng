@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.stereotype.Service;
@@ -53,16 +52,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (userext == null) {
             return null;
         }
-        userext.setPermissions(new ArrayList<>());
         //取出正确密码（hash值）
         String password = userext.getPassword();
         //从数据库获取权限
         List<XcMenu> permissions = userext.getPermissions();
-        List<String> user_permission = new ArrayList<>();
+        if (permissions == null) {
+            permissions = new ArrayList<>();
+        }
+
+        List<String> user_permission = new ArrayList<>();   //存储XcMenu中的code字段
         permissions.forEach(item -> user_permission.add(item.getCode()));
-//        user_permission.add("course_get_baseinfo");
-//        user_permission.add("course_find_pic");
+        //将user_permission转为字符串，使用逗号连接
         String user_permission_string = StringUtils.join(user_permission.toArray(), ",");
+
         UserJwt userDetails = new UserJwt(username,
                 password,
                 AuthorityUtils.commaSeparatedStringToAuthorityList(user_permission_string));
@@ -71,10 +73,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         userDetails.setCompanyId(userext.getCompanyId());//所属企业
         userDetails.setName(userext.getName());//用户名称
         userDetails.setUserpic(userext.getUserpic());//用户头像
-       /* UserDetails userDetails = new org.springframework.security.core.userdetails.User(username,
-                password,
-                AuthorityUtils.commaSeparatedStringToAuthorityList(""));*/
-//                AuthorityUtils.createAuthorityList("course_get_baseinfo","course_get_list"));
+
         return userDetails;
     }
 }

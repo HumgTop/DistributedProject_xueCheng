@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ExceptionCatch {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionCatch.class);
     //定义map的builder对象
-    private static ImmutableMap.Builder<Class<? extends Throwable>, ResultCode> builder = ImmutableMap.builder();
+    protected static ImmutableMap.Builder<Class<? extends Throwable>, ResultCode> builder = ImmutableMap.builder();
     //定义map，配置异常类型所对应的错误代码
     private static ImmutableMap<Class<? extends Throwable>, ResultCode> EXCEPTIONS;
 

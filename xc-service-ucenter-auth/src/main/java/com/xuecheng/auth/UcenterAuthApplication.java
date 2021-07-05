@@ -14,8 +14,8 @@ import org.springframework.web.client.RestTemplate;
 @EnableDiscoveryClient
 @EnableFeignClients
 @EntityScan("com.xuecheng.framework.domain.ucenter")//扫描实体类
-@ComponentScan(basePackages={"com.xuecheng.api"})//扫描接口
-@ComponentScan(basePackages={"com.xuecheng.framework"})//扫描common下的所有类
+@ComponentScan(basePackages = {"com.xuecheng.api"})//扫描接口
+@ComponentScan(basePackages = {"com.xuecheng.framework"})//扫描common下的所有类
 @SpringBootApplication
 public class UcenterAuthApplication {
     public static void main(String[] args) {
@@ -26,5 +26,4 @@ public class UcenterAuthApplication {
     public RestTemplate restTemplate() {
         return new RestTemplate(new OkHttp3ClientHttpRequestFactory());
     }
-
 }

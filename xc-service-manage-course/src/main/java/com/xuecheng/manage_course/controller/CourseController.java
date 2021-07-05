@@ -13,6 +13,7 @@ import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.framework.model.response.ResponseResult;
 import com.xuecheng.manage_course.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -27,6 +28,7 @@ public class CourseController implements CourseControllerApi {
     CourseService courseService;
 
     //查询课程计划
+    @PreAuthorize("hasAuthority('course_teachplan_list')")
     @Override
     @GetMapping("/teachplan/list/{courseId}")
     public TeachplanNode findTeachPlanList(@PathVariable("courseId") String courseId) {
@@ -40,6 +42,7 @@ public class CourseController implements CourseControllerApi {
         return courseService.addTeachplan(teachplan);
     }
 
+    @PreAuthorize("hasAuthority('course_find_list')")    //权限配置注解
     @Override
     @GetMapping("/coursebase/list/{page}/{size}")   //Get请求参数中的companyId字段将被映射到courseListRequest中，作为数据库查询参数
     public QueryResponseResult<CourseInfo> findCourseList(
